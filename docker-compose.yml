@@ -1,0 +1,35 @@
+version: '3'
+
+networks:
+    app-wire:
+        driver: bridge
+
+services: 
+  db:
+    container_name: geo-venues-api-db
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment: 
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_USER: superduper
+      MYSQL_PASSWORD: superduper
+      MYSQL_DATABASE: sequelize_migrations_db
+      MYSQL_ALLOW_EMPTY_PASSWORD: ok
+      MYSQL_ROOT_HOST: '%'
+    expose:
+      - 3306
+    ports: 
+      - 3306:3306
+    networks:
+      - app-wire
+
+  myapp:
+    container_name: geo-venues-api
+    build: .
+    ports: 
+      - 3001:3001
+    depends_on: 
+      - db
+    networks:
+      - app-wire
